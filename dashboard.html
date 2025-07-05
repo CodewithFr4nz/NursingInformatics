@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blush Bloom & Co.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    #enhanced-preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--dark-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+    }
+
+    .loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .spinner-box {
+        width: 200px;
+        height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .medical-cross {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .cross-container {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .cross-horizontal,
+    .cross-vertical {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 8px;
+        animation: glow 1.5s ease-in-out infinite alternate;
+    }
+
+    .cross-horizontal {
+        width: 60px;
+        height: 15px;
+        background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+    }
+
+    .cross-vertical {
+        width: 15px;
+        height: 60px;
+        background: linear-gradient(180deg, var(--primary-pink), var(--primary-purple));
+    }
+
+    .cross-border {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90px;
+        height: 90px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        animation: rotate 3s linear infinite;
+    }
+
+    .cross-border::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        border-top-color: var(--primary-purple);
+        animation: rotate 2s linear infinite reverse;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes glow {
+        0% {
+            box-shadow: 0 0 10px var(--primary-pink);
+        }
+        100% {
+            box-shadow: 0 0 20px var(--primary-purple), 0 0 30px var(--primary-pink);
+        }
+    }
+
+    @keyframes rotate {
+        from {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    .loading-text {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .loading-text span {
+        color: var(--text-tertiary);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 0.2rem;
+        animation: pulse-text 1.5s ease-in-out infinite;
+    }
+
+    .loading-text span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-text span:nth-child(3) { animation-delay: 0.4s; }
+    .loading-text span:nth-child(4) { animation-delay: 0.6s; }
+    .loading-text span:nth-child(5) { animation-delay: 0.8s; }
+    .loading-text span:nth-child(6) { animation-delay: 1s; }
+    .loading-text span:nth-child(7) { animation-delay: 1.2s; }
+
+    .please-wait {
+        color: var(--text-secondary);
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.1rem;
+        margin-top: 2rem;
+        text-align: center;
+        animation: fadeInOut 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-text {
+        0%, 100% {
+            color: var(--text-tertiary);
+            transform: scale(1);
+        }
+        50% {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes fadeInOut {
+        0%, 100% {
+            opacity: 0.7;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+</style>
+</head>
+<body>
+    <div id="enhanced-preloader">
+        <div class="loader-container">
+            <div class="spinner-box">
+                <div class="medical-cross">
+                    <div class="cross-border"></div>
+                    <div class="cross-container">
+                        <div class="cross-horizontal"></div>
+                        <div class="cross-vertical"></div>
+                    </div>
+                </div>
+                <div class="loading-text">
+                    <span>L</span>
+                    <span>O</span>
+                    <span>A</span>
+                    <span>D</span>
+                    <span>I</span>
+                    <span>N</span>
+                    <span>G</span>
+                </div>
+            </div>
+            <div class="please-wait">PLEASE WAIT</div>
+        </div>
+    </div>
+
+    <script>
+        // Hide preloader when everything is loaded
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const preloader = document.getElementById('enhanced-preloader');
+                preloader.style.opacity = '0';
+                preloader.style.transition = 'opacity 0.5s ease';
+                
+                setTimeout(function() {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 3000); // Show for 3 seconds to demonstrate the animation
+        });
+    </script>
+
+    <script>
+        // Ultra optimized custom cursor with duplicate prevention
+        document.addEventListener('DOMContentLoaded', () => {
+          // First, eliminate ALL possible duplicate cursors 
+          // (including any that might be created by other scripts)
+          const removeAllCustomCursors = () => {
+            // Remove by ID
+            const cursorById = document.getElementById('custom-cursor-arrow');
+            if (cursorById) cursorById.remove();
+            
+            // Remove by classname
+            document.querySelectorAll('.custom-cursor-arrow').forEach(el => el.remove());
+            
+            // Remove anything that looks like a cursor
+            document.querySelectorAll('div[style*="cursor"]').forEach(el => {
+              if (el.id !== 'enhanced-preloader' && !el.classList.contains('search-overlay')) {
+                const styles = window.getComputedStyle(el);
+                if (styles.position === 'fixed' && styles.zIndex > 1000 && 
+                    (styles.width < '50px' || styles.height < '50px')) {
+                  el.remove();
+                }
+              }
+            });
+          };
+
+          // Remove any existing cursors immediately
+          removeAllCustomCursors();
+          
+          // Create cursor element with unique timestamp ID to avoid conflicts
+          const cursorId = `custom-cursor-${Date.now()}`;
+          const cursor = document.createElement('div');
+          cursor.id = cursorId;
+          
+          // Apply styles directly to the element for performance
+          cursor.style.cssText = `
+            position: fixed;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid white;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            pointer-events: none;
+            z-index: 2147483647;
+            opacity: 0;
+            transition: border-bottom-color 0.1s ease;
+            will-change: transform, left, top;
+          `;
+          
+          // Add to body and force to top of stacking context
+          document.body.appendChild(cursor);
+          
+          // Hide default cursor with minimal specificity
+          const styleSheet = document.createElement('style');
+          styleSheet.textContent = 'html, body, a, button, input { cursor: none !important; }';
+          document.head.appendChild(styleSheet);
+          
+          // Direct positioning for immediate response - no smoothing for max performance
+          let isActive = false;
+          
+          const updateCursor = (e) => {
+            if (!isActive) {
+              cursor.style.opacity = '1';
+              isActive = true;
+            }
+            
+            // Use transform for better performance
+            cursor.style.left = `${e.clientX}px`;
+            cursor.style.top = `${e.clientY}px`;
+            
+            // Simple clickable detection
+            const el = document.elementFromPoint(e.clientX, e.clientY);
+            const isClickable = el && (
+              el.tagName === 'A' || 
+              el.tagName === 'BUTTON' || 
+              window.getComputedStyle(el).cursor === 'pointer'
+            );
+            
+            cursor.style.borderBottomColor = isClickable ? '#ff9d9d' : 'white';
+            cursor.style.transform = `translate(-50%, -50%) rotate(-45deg) ${isClickable ? 'scale(1.2)' : 'scale(1)'}`;
+          };
+          
+          // Click effect
+          const handleMouseDown = () => {
+            cursor.style.transform = 'translate(-50%, -50%) rotate(-45deg) scale(0.8)';
+          };
+          
+          const handleMouseUp = () => {
+            const isClickable = cursor.style.borderBottomColor === 'rgb(255, 157, 157)';
+            cursor.style.transform = `translate(-50%, -50%) rotate(-45deg) ${isClickable ? 'scale(1.2)' : 'scale(1)'}`;
+          };
+          
+          // Mouse enter/leave document
+          const handleMouseEnter = () => {
+            cursor.style.opacity = '1';
+            isActive = true;
+          };
+          
+          const handleMouseLeave = () => {
+            cursor.style.opacity = '0';
+            isActive = false;
+          };
+          
+          // Attach event listeners with passive flag for performance
+          document.addEventListener('mousemove', updateCursor, { passive: true });
+          document.addEventListener('mousedown', handleMouseDown, { passive: true });
+          document.addEventListener('mouseup', handleMouseUp, { passive: true });
+          document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
+          document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+          
+          // Final check - remove duplicates on window load
+          window.addEventListener('load', () => {
+            // Do another cleanup to ensure no duplicates
+            document.querySelectorAll(`div[id^="custom-cursor"]`).forEach(el => {
+              if (el.id !== cursorId) el.remove();
+            });
+            
+            // Reset the cursor position to current mouse position
+            document.addEventListener('mousemove', (e) => {
+              // One-time correction to ensure cursor is at right position
+              cursor.style.left = `${e.clientX}px`;
+              cursor.style.top = `${e.clientY}px`;
+              cursor.style.opacity = '1';
+            }, { once: true, passive: true });
+          });
+          
+          // Handle page visibility changes (tab switching)
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+              cursor.style.opacity = '0';
+            }
+          });
+        });
+    </script>
+
+ 
+
+ 
+
+
+
+    
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-pink: #ff9d9d;
+            --primary-purple: #CF9FFF;
+            --dark-bg: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 40px rgba(207, 159, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 157, 157, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(207, 159, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 157, 157, 0.05) 0%, transparent 50%),
+                linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: clamp(14px, 1.5vw, 18px);
+        }
+
+        .container {
+            max-width: min(1400px, 95vw);
+            margin: 0 auto;
+            padding: 0 clamp(20px, 4vw, 60px);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: transparent; /* transparent header */
+            backdrop-filter: blur(30px); /* optional: keep blur effect */
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(10, 10, 15, 0.95);
+            box-shadow: var(--shadow);  
+        }
+
+        nav {
+            position: relative; /* needed for absolute children */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: clamp(1rem, 2vw, 2rem) 0;
+        }
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space between image and text */
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: all 0.3s ease;
+}
+
+.logo-img {
+    width: 120px;  /* adjust as needed */
+    height: 60px;
+    object-fit: contain;
+}
+
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.5));
+        }
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  list-style: none;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-primary);
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(207, 159, 255, 0.2);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 80%;
+        }
+.logout-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.logout-link:hover {
+    color: var(--text-primary);
+    background: var(--glass-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(207, 159, 255, 0.2);
+}
+
+        /* Main Content */
+        main {
+            padding-top: clamp(120px, 15vh, 150px);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: clamp(2rem, 3vh, 3rem) 0; /* reduced top & bottom padding */
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 300;
+            margin-bottom: clamp(1rem, 3vh, 2rem);
+            line-height: 1.1;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .hero-title .main-text {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+            display: block;
+            filter: drop-shadow(0 0 30px rgba(207, 159, 255, 0.3));
+        }
+
+        .hero-title .sub-text {
+            color: var(--text-secondary);
+            font-weight: 200;
+            display: block;
+            margin-top: clamp(0.5rem, 1vh, 1rem);
+            font-size: clamp(2rem, 5vw, 5rem);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+            color: var(--text-tertiary);
+            margin-bottom: clamp(3rem, 6vh, 6rem);
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Contraceptive Methods Grid */
+        .contraceptive-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(1rem, 2vw, 1.5rem);
+            margin: clamp(2rem, 4vh, 4rem) 0;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.6s forwards;
+        }
+
+        .contraceptive-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: clamp(1.5rem, 3vw, 2rem);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .contraceptive-item:nth-child(even) {
+            animation-delay: -3s;
+        }
+
+        .contraceptive-item:nth-child(3n) {
+            animation-delay: -1.5s;
+        }
+
+        .contraceptive-item:nth-child(4n) {
+            animation-delay: -4.5s;
+        }
+
+        .contraceptive-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .contraceptive-item:hover::before {
+            left: 100%;
+        }
+
+        .contraceptive-item:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+            animation-play-state: paused;
+        }
+
+        .contraceptive-icon {
+            font-size: clamp(2rem, 4vw, 3rem);
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(0.5rem, 1vh, 1rem);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.3));
+        }
+
+        .contraceptive-item:hover .contraceptive-icon {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 30px rgba(207, 159, 255, 0.5));
+        }
+
+        .contraceptive-title {
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            color: var(--text-primary);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Set to 4 columns */
+            gap: clamp(1.5rem, 2vw, 2rem);
+            margin: clamp(4rem, 8vh, 8rem) 0;
+            opacity: 1;
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .service-icon {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: clamp(1rem, 2vh, 1.5rem);
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.3));
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 30px rgba(207, 159, 255, 0.5));
+        }
+
+        .service-title {
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            color: var(--text-primary);
+            margin-bottom: clamp(1rem, 2vh, 1.5rem);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.3));
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modal-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-features li:last-child {
+            border-bottom: none;
+        }
+
+        .modal-features li::before {
+            content: '✓';
+            color: var(--primary-purple);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .modal-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* About Section */
+        .about-section {
+            display: none;
+            margin: clamp(4rem, 8vh, 8rem) 0;
+            opacity: 0;
+        }
+
+        .about-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+            gap: clamp(2rem, 4vw, 4rem);
+        }
+
+        .about-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: clamp(2rem, 4vw, 3rem);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .about-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .about-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--glow);
+            border-color: var(--primary-purple);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .about-card h3 {
+            color: var(--text-primary);
+            font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+            margin-bottom: clamp(1rem, 2vh, 1.5rem);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .about-card h3 i {
+            background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+        }
+
+        /* Floating Elements */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: clamp(60px, 8vw, 120px);
+            height: clamp(60px, 8vw, 120px);
+            top: 15%;
+            left: 8%;
+            background: radial-gradient(circle, rgba(255, 157, 157, 0.1) 0%, transparent 70%);
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: clamp(80px, 10vw, 160px);
+            height: clamp(80px, 10vw, 160px);
+            top: 60%;
+            right: 10%;
+            background: radial-gradient(circle, rgba(207, 159, 255, 0.1) 0%, transparent 70%);
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(3) {
+            width: clamp(40px, 6vw, 80px);
+            height: clamp(40px, 6vw, 80px);
+            bottom: 25%;
+            left: 15%;
+            background: radial-gradient(circle, rgba(255, 157, 157, 0.08) 0%, transparent 70%);
+            animation-delay: 6s;
+        }
+
+        .shape:nth-child(4) {
+            width: clamp(50px, 7vw, 100px);
+            height: clamp(50px, 7vw, 100px);
+            top: 40%;
+            right: 30%;
+            background: radial-gradient(circle, rgba(207, 159, 255, 0.08) 0%, transparent 70%);
+            animation-delay: 2s;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+            75% {
+                transform: translateY(-15px) rotate(0.5deg);
+            }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: clamp(2rem, 4vh, 4rem);
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator i {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            color: var(--text-tertiary);
+            transition: all 0.3s ease;
+        }
+
+        .scroll-indicator:hover i {
+            color: var(--primary-purple);
+            transform: scale(1.2);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-15px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu:hover {
+            background: var(--glass-bg);
+            color: var(--primary-purple);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .contraceptive-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 12vw, 4rem);
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contraceptive-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .service-card,
+            .about-card {
+                padding: 1.5rem;
+            }
+
+            .contraceptive-item {
+                padding: 1rem;
+            }
+        }
+
+        /* High DPI displays */
+        @media (min-resolution: 2dppx) {
+            body {
+                font-size: clamp(16px, 1.8vw, 20px);
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1600px;
+            }
+            
+            body {
+                font-size: 20px;
+            }
+        }
+
+/* Footer */
+footer {
+    background: var(--card-bg);
+    backdrop-filter: blur(30px);
+    border-top: 1px solid var(--border-color);
+    margin-top: clamp(8rem, 12vh, 12rem);
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple), var(--primary-pink));
+    animation: gradientMove 3s ease-in-out infinite alternate;
+}
+
+@keyframes gradientMove {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.footer-content {
+    padding: clamp(3rem, 6vh, 6rem) 0 clamp(2rem, 4vh, 3rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: clamp(2rem, 4vw, 4rem);
+    position: relative;
+}
+
+.footer-section h3 {
+    color: var(--text-primary);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 600;
+    margin-bottom: clamp(1rem, 2vh, 1.5rem);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.footer-section h3 i {
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+}
+
+.footer-section p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-radius: 8px;
+    position: relative;
+}
+
+.footer-links a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    transition: width 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+    transform: translateX(10px);
+    padding-left: 1rem;
+}
+
+.footer-links a:hover::before {
+    width: 20px;
+}
+
+.footer-links a i {
+    font-size: 1rem;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover i {
+    opacity: 1;
+    color: var(--primary-purple);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--border-color);
+    font-size: 1.2rem;
+}
+
+.social-links a:hover {
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(207, 159, 255, 0.3);
+    border-color: transparent;
+}
+
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
+
+.contact-item:hover {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    transform: translateX(5px);
+}
+
+.contact-item i {
+    color: var(--primary-purple);
+    font-size: 1.2rem;
+    min-width: 20px;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding: clamp(1.5rem, 3vh, 2rem) 0;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: clamp(0.9rem, 1.2vw, 1rem);
+    position: relative;
+}
+
+.footer-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-purple), transparent);
+}
+
+.footer-bottom p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.footer-bottom .heart {
+    color: var(--primary-pink);
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.footer-logo {
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.footer-logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(207, 159, 255, 0.5));
+}
+
+/* Newsletter Signup */
+.newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.newsletter-input {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.newsletter-input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 20px rgba(207, 159, 255, 0.3);
+}
+
+.newsletter-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.newsletter-btn {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(45deg, var(--primary-pink), var(--primary-purple));
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.newsletter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(207, 159, 255, 0.4);
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        text-align: center;
+    }
+    
+    .newsletter-form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .footer-bottom p {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-content {
+        padding: 2rem 0 1.5rem;
+    }
+    
+    .social-links a {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <header id="header">
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+    <img src="images/log.png" alt="Logo" class="logo-img">
+    Blush Bloom & Co.
+</a>
+
+                <ul class="nav-links">
+                    <li><a href="#" onclick="showHome()">Home</a></li>
+                    <li><a href="#" onclick="showServices()">Services</a></li>
+                    <li><a href="#" onclick="showAbout()">About Us</a></li>
+                </ul>
+                <a href="index.html" class="logout-link">Logout</a>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1 class="hero-title">
+                    <span class="main-text">Blush Bloom</span>
+                    <span class="sub-text">& Co.</span>
+                </h1>
+                <p class="hero-subtitle">Empowering Women's Health & Wellness Through Innovation</p>
+
+                <div class="contraceptive-grid" id="contraceptiveGrid">
+          <div class="contraceptive-item"><i class="fas fa-venus contraceptive-icon"></i><h3 class="contraceptive-title">Female Condom</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-circle contraceptive-icon"></i><h3 class="contraceptive-title">Contraceptive Sponge</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-mars contraceptive-icon"></i><h3 class="contraceptive-title">Male Condom</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-flask contraceptive-icon"></i><h3 class="contraceptive-title">Spermicide</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-shield-alt contraceptive-icon"></i><h3 class="contraceptive-title">Cervical Cap</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-band-aid contraceptive-icon"></i><h3 class="contraceptive-title">Contraceptive Patch</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-circle-notch contraceptive-icon"></i><h3 class="contraceptive-title">Diaphragm</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-microchip contraceptive-icon"></i><h3 class="contraceptive-title">Birth Control Implant</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-syringe contraceptive-icon"></i><h3 class="contraceptive-title">Birth Control Shot</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-ring contraceptive-icon"></i><h3 class="contraceptive-title">Vaginal Ring</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-pills contraceptive-icon"></i><h3 class="contraceptive-title">Contraceptive Pill</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-exclamation-triangle contraceptive-icon"></i><h3 class="contraceptive-title">Emergency Contraception</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-dna contraceptive-icon"></i><h3 class="contraceptive-title">Progestin IUD</h3></div>
+          <div class="contraceptive-item"><i class="fas fa-capsules contraceptive-icon"></i><h3 class="contraceptive-title">Estradiol Valerate</h3></div>
+        </div>
+                
+<div class="services-grid" id="servicesGrid">
+        <div class="service-card" onclick="openModal('contraceptive')">
+            <i class="fas fa-shield-alt service-icon"></i>
+            <h3 class="service-title">Contraceptive Solutions</h3>
+            <p class="service-description">Advanced contraceptive technologies and personalized solutions designed for modern women...</p>
+        </div>
+        
+        <div class="service-card" onclick="openModal('wellness')">
+            <i class="fas fa-brain service-icon"></i>
+            <h3 class="service-title">Wellness Counseling</h3>
+            <p class="service-description">Professional mental health support combining traditional therapy with innovative approaches...</p>
+        </div>
+        
+        <div class="service-card" onclick="openModal('screening')">
+            <i class="fas fa-heartbeat service-icon"></i>
+            <h3 class="service-title">Check-Up</h3>
+            <p class="service-description">State-of-the-art diagnostic technology for complete health assessment...</p>
+        </div>
+        
+        <div class="service-card" onclick="openModal('prebiotics')">
+            <i class="fas fa-dna service-icon"></i>
+            <h3 class="service-title">Advanced Prebiotics</h3>
+            <p class="service-description">Scientifically-formulated prebiotic supplements using breakthrough research...</p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="modal-icon" id="modalIcon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            
+            <h2 class="modal-title" id="modalTitle">Service Title</h2>
+            
+            <p class="modal-description" id="modalDescription">
+                Service description will appear here...
+            </p>
+            
+            <ul class="modal-features" id="modalFeatures">
+                <!-- Features will be populated by JavaScript -->
+            </ul>
+        </div>
+    </div>
+
+                <div class="about-section" id="aboutSection">
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <h3><i class="fas fa-rocket"></i> Our Mission</h3>
+                            <p>To revolutionize women's healthcare through innovative technology and personalized care. We combine cutting-edge medical advances with compassionate support to empower women to take control of their health journey. Every solution we offer is designed with the modern woman in mind, addressing real needs with real results.</p>
+                        </div>
+                        
+                        <div class="about-card">
+                            <h3><i class="fas fa-star"></i> Our Vision</h3>
+                            <p>To create a future where women's health is not just treated, but optimized. We envision a world where every woman has access to personalized, technology-driven healthcare solutions that adapt to her unique needs and lifestyle. Through innovation, education, and empowerment, we're building tomorrow's healthcare today.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scroll-indicator">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </section>
+        </div>
+
+
+        <footer>
+  <div class="container footer-content">
+    <div class="footer-section">
+      <h3><i class="fas fa-heartbeat"></i> About Us</h3>
+      <p>We’re dedicated to bringing you engaging and informative content about contraceptive options and reproductive health awareness.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3><i class="fas fa-link"></i> Quick Links</h3>
+<ul class="footer-links">
+  <li><a href="#" onclick="showHome()"><i class="fas fa-chevron-right"></i> Home</a></li>
+  <li><a href="#" onclick="showAbout()"><i class="fas fa-chevron-right"></i> About</a></li>
+  <li><a href="#" onclick="showServices()"><i class="fas fa-chevron-right"></i> Services</a></li>
+  <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+</ul>
+
+    </div>
+
+    <div class="footer-section">
+      <h3><i class="fas fa-paper-plane"></i> Newsletter</h3>
+      <p>Get updates and tips directly to your inbox. Sign up below.</p>
+      <form class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="Enter your email" required />
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+      </form>
+    </div>
+
+    <div class="footer-section footer-contact">
+      <h3><i class="fas fa-phone-alt"></i> Contact</h3>
+      <div class="contact-item"><i class="fas fa-map-marker-alt"></i> Maasin City, PH</div>
+      <div class="contact-item"><i class="fas fa-envelope"></i> NicahKylaPadillaTutor@gmail.com</div>
+      <div class="contact-item"><i class="fas fa-envelope"></i> ChikinaMaeVallente@gmail.com</div>
+      <div class="contact-item"><i class="fas fa-phone"></i> +63 992 499 6454</div>
+      <div class="social-links">
+        <a href="https://web.facebook.com/NINXXXI" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://web.facebook.com/lovelykhenna.gray" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href=""><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>
+      <span class="footer-logo">Blush Bloom & Co.</span>
+    </p>
+  </div>
+</footer>
+
+    </main>
+
+<script>
+    
+    function showHome() {
+        const servicesGrid = document.getElementById('servicesGrid');
+        const aboutSection = document.getElementById('aboutSection');
+        const contraceptiveGrid = document.getElementById('contraceptiveGrid');
+
+        contraceptiveGrid.style.display = 'grid';
+        servicesGrid.style.display = 'none';
+        servicesGrid.classList.remove('active');
+        aboutSection.style.display = 'none';
+        aboutSection.classList.remove('active');
+
+        setActiveLink('Home');
+    }
+
+    function showServices() {
+        const servicesGrid = document.getElementById('servicesGrid');
+        const aboutSection = document.getElementById('aboutSection');
+        const contraceptiveGrid = document.getElementById('contraceptiveGrid');
+
+        contraceptiveGrid.style.display = 'none';
+        servicesGrid.style.display = 'grid';
+        servicesGrid.classList.add('active');
+        aboutSection.style.display = 'none';
+        aboutSection.classList.remove('active');
+
+        setActiveLink('Services');
+    }
+
+
+        const serviceData = {
+            contraceptive: {
+                icon: 'fas fa-shield-alt',
+                title: 'Contraceptive Solutions',
+                description: 'Advanced contraceptive technologies and personalized solutions designed for modern women. From smart pills to next-generation IUDs, we provide cutting-edge options with expert guidance and comprehensive support.',
+                features: [
+                    'Smart contraceptive pills with tracking technology',
+                    'Next-generation IUDs with enhanced comfort',
+                    'Personalized contraceptive planning',
+                    'Expert medical guidance and support',
+                    'Comprehensive health monitoring',
+                    'Flexible appointment scheduling'
+                ]
+            },
+            wellness: {
+                icon: 'fas fa-brain',
+                title: 'Wellness Counseling',
+                description: 'Professional mental health support combining traditional therapy with innovative approaches. Our certified counselors specialize in women\'s unique challenges, offering both in-person and virtual sessions.',
+                features: [
+                    'Certified mental health professionals',
+                    'Specialized women\'s therapy programs',
+                    'In-person and virtual session options',
+                    'Stress management techniques',
+                    'Relationship and family counseling',
+                    'Career and life transition support'
+                ]
+            },
+            screening: {
+                icon: 'fas fa-heartbeat',
+                title: 'Check-Up',
+                description: 'State-of-the-art diagnostic technology for complete health assessment. Our advanced screening programs detect potential issues early and provide personalized prevention strategies.',
+                features: [
+                    'Advanced diagnostic technology',
+                    'Comprehensive health assessments',
+                    'Early detection programs',
+                    'Personalized prevention strategies',
+                    'Regular health monitoring',
+                    'Detailed health reports and analysis'
+                ]
+            },
+            prebiotics: {
+                icon: 'fas fa-dna',
+                title: 'Advanced Prebiotics',
+                description: 'Scientifically-formulated prebiotic supplements using breakthrough research. Our premium products support optimal gut health, immunity, and overall wellness with precision-targeted formulations.',
+                features: [
+                    'Scientifically-formulated supplements',
+                    'Breakthrough research-based formulations',
+                    'Premium quality ingredients',
+                    'Gut health optimization',
+                    'Immunity system support',
+                    'Personalized wellness plans'
+                ]
+            }
+        };
+
+        function openModal(serviceType) {
+            const modal = document.getElementById('modalOverlay');
+            const service = serviceData[serviceType];
+            
+            if (service) {
+                // Update modal content
+                document.getElementById('modalIcon').innerHTML = `<i class="${service.icon}"></i>`;
+                document.getElementById('modalTitle').textContent = service.title;
+                document.getElementById('modalDescription').textContent = service.description;
+                
+                // Update features list
+                const featuresList = document.getElementById('modalFeatures');
+                featuresList.innerHTML = '';
+                service.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    featuresList.appendChild(li);
+                });
+                
+                // Show modal
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modalOverlay');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+
+    function showAbout() {
+        const servicesGrid = document.getElementById('servicesGrid');
+        const aboutSection = document.getElementById('aboutSection');
+        const contraceptiveGrid = document.getElementById('contraceptiveGrid');
+
+        contraceptiveGrid.style.display = 'none';
+        servicesGrid.style.display = 'none';
+        aboutSection.style.display = 'block'; // ✅ Fix applied
+        aboutSection.classList.add('active');
+
+        setActiveLink('About Us');
+    }
+
+    function toggleService(card) {
+        card.classList.toggle('active');
+    }
+
+    function setActiveLink(text) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.toggle('active', link.textContent.trim() === text);
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('header');
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    document.querySelectorAll('.service-card, .about-card').forEach(card => {
+        card.addEventListener('mouseenter', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', x + 'px');
+            card.style.setProperty('--mouse-y', y + 'px');
+        });
+    });
+
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.service-card, .about-card').forEach(card => {
+        observer.observe(card);
+    });
+
+    window.addEventListener('DOMContentLoaded', showHome);
+</script>
+
+</body>
+</html>
